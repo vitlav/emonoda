@@ -187,7 +187,7 @@ class Plugin(WithCustoms):
         mc.d.base_filename(torrent_hash)
         mc.d.is_multi_file(torrent_hash)
         mc.d.size_files(torrent_hash)
-        mc.f.size_bytes(torrent_hash, 0)
+        mc.f.size_bytes(f"{torrent_hash}:f0")
         (base_file_name, is_multi_file, count, first_file_size) = tuple(mc())  # type: ignore
 
         if not is_multi_file:
@@ -195,8 +195,8 @@ class Plugin(WithCustoms):
 
         mc = xmlrpc.client.MultiCall(self.__server)
         for index in range(count):
-            mc.f.path(torrent_hash, index)
-            mc.f.size_bytes(torrent_hash, index)
+            mc.f.path(f"{torrent_hash}:f{index}")
+            mc.f.size_bytes(f"{torrent_hash}:f{index}")
         flist = list(mc())  # type: ignore
         flist = list(zip(flist[::2], flist[1::2]))
 
