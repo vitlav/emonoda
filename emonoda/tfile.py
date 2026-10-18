@@ -81,7 +81,11 @@ class Torrent:
             return self.load_from_data(torrent_file.read(), path)
 
     def load_from_data(self, data: bytes, path: Optional[str]=None) -> "Torrent":
-        self.__bencode = decode_torrent_data(data)
+        bencode = decode_torrent_data(data)
+        if not isinstance(bencode.get(b"info"), dict):
+            # E.g. Transmission keeps files of magnet links without metadata in its torrents dir
+            raise ValueError("Missing 'info' section")
+        self.__bencode = bencode
         self.__path = path
         self.__data = data
         self.__hash = ""
